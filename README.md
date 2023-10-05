@@ -4,8 +4,8 @@ Experimental efforts to build a UI for AutoGen agents.
 
 v0.0.1 goals
 
-- [ ]**FastApi end point for AutoGen**.
-  This involves setting up a FastApi endpoint that can respond to end user prompt based requests using a basic two agent format.
+- [ ] **FastApi end point for AutoGen**.
+      This involves setting up a FastApi endpoint that can respond to end user prompt based requests using a basic two agent format.
 - [ ] **Basic Chat UI**
       Front end UI with a chatbox to enable sending requests and showing responses from the end point.
 - [ ] **Flow based Playground UI**  
