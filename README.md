@@ -1,8 +1,14 @@
 # AutoGen UI
 
-Experimental UI for AutoGen agents, based on the [AutoGen](https://github.com/microsoft/autogen) library. The UI is built using Next.js and web apis built using FastApi.
+Experimental UI for working with [AutoGen](https://github.com/microsoft/autogen) agents, based on the [AutoGen](https://github.com/microsoft/autogen) library. The UI is built using Next.js and web apis built using FastApi.
 
-> **Note:** This is an experimental project and this might change.
+## Why AutoGen UI?
+
+AutoGen is a framework that enables the development of LLM applications using multiple agents that can converse with each other to solve complex tasks. A UI can help in the development of such applications by enabling rapid prototypingand testing and debugging of agents/agent flows (defining, composing etc) inspecting agent behaviors, and agent outcomes.
+
+-
+
+> **Note:** This is early work in progress.
 
 ## Getting Started
 
@@ -22,13 +28,29 @@ Open http://localhost:8081 in your browser.
 
 To modify the source files, make changes in the frontend source files and run `npm run build` to rebuild the frontend.
 
-## Status
+## Roadmap
 
-v0.0.1 goals
-
-- [ ] **FastApi end point for AutoGen**.
+- [x] **FastApi end point for AutoGen**.
       This involves setting up a FastApi endpoint that can respond to end user prompt based requests using a basic two agent format.
 - [ ] **Basic Chat UI**
       Front end UI with a chatbox to enable sending requests and showing responses from the end point for a basic 2 agent format.
+  - [ ] **Debug Tools**: enable support for useful debugging capabilities like viewing
+    - [x] # of agent turns per request
+    - [ ] agent internal conversation history per request - [ ] cost of interaction per request (# tokens and $ cost)
 - [ ] **Flow based Playground UI**  
        Explore the use of a tool like React Flow to add agent nodes and compose agent flows. For example, setup an assistant agent + a code agent, click run and view output in a chat window.
+
+## References
+
+- [AutoGen](https://arxiv.org/abs/2308.08155).
+
+```
+@inproceedings{wu2023autogen,
+      title={AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation Framework},
+      author={Qingyun Wu and Gagan Bansal and Jieyu Zhang and Yiran Wu and Shaokun Zhang and Erkang Zhu and Beibin Li and Li Jiang and Xiaoyun Zhang and Chi Wang},
+      year={2023},
+      eprint={2308.08155},
+      archivePrefix={arXiv},
+      primaryClass={cs.AI}
+}
+```
