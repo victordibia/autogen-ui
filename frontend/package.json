@@ -8,6 +8,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.2.6",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
     "@planetscale/database": "^1.11.0",

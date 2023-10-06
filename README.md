@@ -1,12 +1,12 @@
 # AutoGen UI
 
+![AutoGen UI Screenshot](docs/images/autogenuiscreen.png)
+
 Experimental UI for working with [AutoGen](https://github.com/microsoft/autogen) agents, based on the [AutoGen](https://github.com/microsoft/autogen) library. The UI is built using Next.js and web apis built using FastApi.
 
 ## Why AutoGen UI?
 
 AutoGen is a framework that enables the development of LLM applications using multiple agents that can converse with each other to solve complex tasks. A UI can help in the development of such applications by enabling rapid prototypingand testing and debugging of agents/agent flows (defining, composing etc) inspecting agent behaviors, and agent outcomes.
-
--
 
 > **Note:** This is early work in progress.
 
@@ -40,6 +40,10 @@ To modify the source files, make changes in the frontend source files and run `n
     - [ ] cost of interaction per request (# tokens and $ cost)
 - [ ] **Flow based Playground UI**  
        Explore the use of a tool like React Flow to add agent nodes and compose agent flows. For example, setup an assistant agent + a code agent, click run and view output in a chat window.
+  - [ ] Create agent nodes
+  - [ ] Compose agent nodes into flows
+  - [ ] Run agent flows
+- [ ] Explore external integrations e.g. with [Flowise](https://github.com/FlowiseAI/Flowise)
 
 ## References
 
