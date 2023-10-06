@@ -36,6 +36,7 @@ To modify the source files, make changes in the frontend source files and run `n
       Front end UI with a chatbox to enable sending requests and showing responses from the end point for a basic 2 agent format.
   - [ ] **Debug Tools**: enable support for useful debugging capabilities like viewing
     - [x] # of agent turns per request
+    - [ ] define agent config (e.g. assistant agent + code agent)
     - [ ] agent internal conversation history per request
     - [ ] cost of interaction per request (# tokens and $ cost)
 - [ ] **Flow based Playground UI**  
