@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "autogenui" 
+authors = [
+  { name="Victor Dibia", email="victor.dibia@gmail.com" },
+]
+description = "autogen ui: a ui interface for the autogen library "
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+
+dependencies = [
+    "pydantic",  
+    "fastapi",
+    "uvicorn",
+]
+optional-dependencies = {web = ["fastapi", "uvicorn"]}
+
+dynamic = ["version"]
+
+[tool.setuptools]
+include-package-data = true
+
+
+[tool.setuptools.dynamic]
+version = {attr = "autogenui.version.VERSION"}
+readme = {file = ["README.md"]}
+
+[tool.setuptools.packages.find]  
+include = ["autogenui*"]  
+exclude = ["*.tests*"]  
+namespaces = false  
+
+[tool.setuptools.package-data]
+"autogenui" = ["*.*"]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore:Deprecated call to `pkg_resources\\.declare_namespace\\('.*'\\):DeprecationWarning",
+    "ignore::DeprecationWarning:google.rpc",
+]
+
+
+[project.urls]
+"Homepage" = "https://github.com/victordibia/autogenui"
+"Bug Tracker" = "https://github.com/victordibia/autogenui/issues"
+
+[project.scripts]
+autogenui = "autogenui.cli:run" 
