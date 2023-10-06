@@ -1,6 +1,10 @@
 # AutoGen UI
 
-Experimental starterkit UI for AutoGen agents.
+Experimental UI for AutoGen agents, based on the [AutoGen](https://github.com/microsoft/autogen) library.
+
+## Getting Started
+
+## Status
 
 v0.0.1 goals
 
