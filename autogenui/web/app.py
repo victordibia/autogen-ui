@@ -29,9 +29,14 @@ app.mount("/api", api)
 
 root_file_path = os.path.dirname(os.path.abspath(__file__))
 files_static_root = os.path.join(root_file_path, "files/")
+static_folder_root = os.path.join(root_file_path, "ui")
+
 
 os.makedirs(files_static_root, exist_ok=True)
 api.mount("/files", StaticFiles(directory=files_static_root, html=True), name="files")
+
+
+app.mount("/", StaticFiles(directory=static_folder_root, html=True), name="ui")
 
 
 manager = Manager()

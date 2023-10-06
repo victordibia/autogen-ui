@@ -6,7 +6,7 @@ import ChatBoxView from '../components/nodes/chatview';
 // import Search from './search';
 // import UsersTable from './table';
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-static';
 
 export default async function IndexPage() {
   const initMessages: IChatMessage[] = [];

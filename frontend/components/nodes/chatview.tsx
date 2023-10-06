@@ -19,6 +19,12 @@ import { IChatMessage, IMessage, IStatus } from '../types';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { fetchJSON } from '../utils';
 
+interface CodeProps {
+  node?: any;
+  inline?: any;
+  className?: any;
+  children?: React.ReactNode;
+}
 export default function ChatBoxView({
   context,
   config,
@@ -160,7 +166,7 @@ export default function ChatBoxView({
 
     const menu = (
       <Dropdown
-        className=""
+        className="w-32"
         menu={{ items }}
         trigger={['click']}
         placement="bottomRight"
@@ -208,22 +214,28 @@ export default function ChatBoxView({
                 className={`   w-full chatbox prose dark:prose-invert text-primary rounded p-2 `}
               >
                 <ReactMarkdown
-                  children={processString(message.text)}
                   remarkPlugins={[remarkGfm]}
                   components={{
-                    code({ node, inline, className, children, ...props }) {
-                      let match = /language-(\w+)/.exec(className || '');
-                      match = match ? match : 'text';
+                    code({
+                      node,
+                      inline,
+                      className,
+                      children,
+                      ...props
+                    }: CodeProps) {
+                      const match = /language-(\w+)/.exec(className || '');
+                      const language = match ? match[1] : 'text';
                       return !inline && match ? (
                         <SyntaxHighlighter
                           {...props}
-                          children={String(children).replace(/\n$/, '')}
                           style={atomDark}
-                          language={match[1]}
+                          language={language}
                           className="rounded"
                           PreTag="div"
                           wrapLongLines={true}
-                        />
+                        >
+                          {String(children).replace(/\n$/, '')}
+                        </SyntaxHighlighter>
                       ) : (
                         <code {...props} className={className}>
                           {children}
@@ -231,7 +243,12 @@ export default function ChatBoxView({
                       );
                     }
                   }}
-                />
+                >
+                  {processString(message.text)}
+                </ReactMarkdown>
+                <div className="text-xs mt-1">
+                  {message.metadata.length} messages
+                </div>
               </div>
             )}
           </div>
@@ -283,6 +300,16 @@ export default function ChatBoxView({
     });
   };
 
+  const getLastMessage = (messages: any[], n: number = 5) => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const content = messages[i]['content'];
+      if (content.length > n) {
+        return content;
+      }
+    }
+    return null;
+  };
+
   const getCompletion = (query: string) => {
     setError(null);
     let messageHolder = Object.assign([], messages);
@@ -318,7 +345,7 @@ export default function ChatBoxView({
           res.json().then((data) => {
             if (data && data.status) {
               console.log('******* response received ', data);
-              const lastMessage = data.data[data.data.length - 1]['content'];
+              const lastMessage = getLastMessage(data.data);
               const botMesage: IChatMessage = {
                 text: lastMessage,
                 sender: 'bot',
@@ -347,14 +374,15 @@ export default function ChatBoxView({
   return (
     <div
       style={{ height: 'calc(100% - 20px)' }}
-      className="text-primary  border relative   rounded  "
+      className="text-primary   overflow-auto relative   rounded  "
     >
       <div
+        style={{ height: 'calc(100% - 70px)' }}
         ref={messageBoxInputRef}
-        className="flex h-max    flex-col rounded  scroll pr-2 overflow-auto  "
+        className="flex overflow-auto  flex-col rounded  scroll pr-2   "
       >
         <div className="flex-1  boder mt-4"></div>
-        <div className="ml-2"> {messageListView}</div>
+        <div className="ml-2 "> {messageListView}</div>
         <div className="ml-2 h-6   mb-4 mt-2   ">
           {loading && (
             <div className="inline-flex gap-2">
@@ -367,7 +395,7 @@ export default function ChatBoxView({
       </div>
       <div className="mt-2 p-2 absolute   bottom-0 w-full">
         <div
-          className={`mt-2   rounded p-2 shadow-lg flex mb-1  gap-2 ${
+          className={`mt-2   rounded p-2 shadow-lg flex mb-1    ${
             loading ? ' opacity-50 pointer-events-none' : ''
           }`}
         >
@@ -402,7 +430,7 @@ export default function ChatBoxView({
                 getCompletion(queryInputRef.current?.value);
               }
             }}
-            className="bg-accent hover:brightness-75 transition duration-300 rounded pt-2 rounded-l-none px-5 "
+            className="bg-accent   hover:brightness-75 transition duration-300 rounded pt-2 rounded-l-none px-5 "
           >
             {' '}
             {!loading && (

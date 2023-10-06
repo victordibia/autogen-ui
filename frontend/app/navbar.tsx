@@ -4,7 +4,7 @@ import { Fragment } from 'react';
 import { usePathname } from 'next/navigation';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import { signIn, signOut } from 'next-auth/react';
+// import { signIn, signOut } from 'next-auth/react';
 import Image from 'next/image';
 
 const navigation = [
@@ -14,6 +14,14 @@ const navigation = [
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
+}
+
+function signIn(provider: string) {
+  console.log('sign in');
+}
+
+function signOut() {
+  console.log('sign out');
 }
 
 export default function Navbar({ user }: { user: any }) {

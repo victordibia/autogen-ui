@@ -2,6 +2,7 @@
 import { Card, Title, Text } from '@tremor/react';
 import FlowView from './flow';
 
+export const dynamic = 'force-static';
 export default function PlaygroundPage() {
   return (
     <div className="text-md  ">
