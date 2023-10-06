@@ -22,6 +22,7 @@ dependencies = [
     "pydantic",  
     "fastapi",
     "uvicorn",
+    "pyautogen"
 ]
 optional-dependencies = {web = ["fastapi", "uvicorn"]}
 
