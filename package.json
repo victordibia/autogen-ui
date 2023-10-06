@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "react-markdown": "^9.0.0",
+    "react-syntax-highlighter": "^15.5.0",
+    "remark-gfm": "^4.0.0"
+  }
+}

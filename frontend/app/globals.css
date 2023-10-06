@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.text-accent {
+  color: #5e87e3 !important;
+}
+.bg-accent {
+  background-color: #5e87e3 !important;
+}
+.border-accent {
+  border-color: #5e87e3 !important;
+}
