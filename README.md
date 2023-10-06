@@ -1,8 +1,26 @@
 # AutoGen UI
 
-Experimental UI for AutoGen agents, based on the [AutoGen](https://github.com/microsoft/autogen) library.
+Experimental UI for AutoGen agents, based on the [AutoGen](https://github.com/microsoft/autogen) library. The UI is built using Next.js and web apis built using FastApi.
+
+> **Note:** This is an experimental project and this might change.
 
 ## Getting Started
+
+Install dependencies. Python 3.8+ is required.
+
+```bash
+pip install -e .
+```
+
+Run ui server.
+
+```bash
+autogenui # or with --port 8081
+```
+
+Open http://localhost:8081 in your browser.
+
+To modify the source files, make changes in the frontend source files and run `npm run build` to rebuild the frontend.
 
 ## Status
 

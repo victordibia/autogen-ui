@@ -1,17 +1,19 @@
+from typing_extensions import Annotated
 import typer
 import uvicorn
 import os
-from typing_extensions import Annotated
 
-app = typer.Typer()
+app = typer.Typer(invoke_without_command=True)
 
 
-@app.command()
-def main(host: str = "127.0.0.1",
-         port: int = 8081,
-         workers: int = 1,
-         reload: Annotated[bool, typer.Option("--reload")] = True,
-         docs: bool = False):
+@app.callback()
+def main(
+    host: str = "127.0.0.1",
+    port: int = 8081,
+    workers: int = 1,
+    reload: Annotated[bool, typer.Option("--reload")] = True,
+    docs: bool = False,
+):
     """
     Launch the Autogen UI CLI .Pass in parameters host, port, workers, and reload to override the default values.
     """
