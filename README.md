@@ -39,6 +39,8 @@ To modify the source files, make changes in the frontend source files and run `n
     - [ ] define agent config (e.g. assistant agent + code agent)
     - [ ] agent internal conversation history per request
     - [ ] cost of interaction per request (# tokens and $ cost)
+- [ ] Streaming UI
+      Enable streaming of agent responses to the UI. This will enable the UI to show agent responses as they are generated, instead of waiting for the entire response to be generated.
 - [ ] **Flow based Playground UI**  
        Explore the use of a tool like React Flow to add agent nodes and compose agent flows. For example, setup an assistant agent + a code agent, click run and view output in a chat window.
   - [ ] Create agent nodes
