@@ -10,6 +10,13 @@ AutoGen is a framework that enables the development of LLM applications using mu
 
 > **Note:** This is early work in progress.
 
+
+Note that you will have to setup your OPENAI_API_KEY or general llm config using an environment variable. 
+Also See this article for how Autogen supports multiple [llm providers](https://microsoft.github.io/autogen/docs/FAQ/#set-your-api-endpoints)
+
+```bash
+export OPENAI_API_KEY=<your key>
+```
 ## Getting Started
 
 Install dependencies. Python 3.8+ is required.
