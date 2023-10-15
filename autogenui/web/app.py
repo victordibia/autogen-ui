@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 
 from ..manager import Manager
-
+import traceback
 
 logger = logging.getLogger("autogenui")
 
@@ -54,6 +54,7 @@ async def generate(req: GenerateWebRequest) -> Dict:
             "status": True
         }
     except Exception as e:
+        traceback.print_exc()
         response = {
             "data": str(e),
             "status": False

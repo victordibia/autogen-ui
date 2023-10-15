@@ -1,5 +1,5 @@
 1:HL["/_next/static/css/f97408ee89ea284d.css","style"]
-0:["PqYC0EqQR_2iRfgtTTdDY",[[["",{"children":["playground",{"children":["__PAGE__",{}]}]},"$undefined","$undefined",true],"$L2",[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/f97408ee89ea284d.css","precedence":"next"}]],"$L3"]]]]
+0:["BRcqvIGSgmNzqityB7Nxs",[[["",{"children":["playground",{"children":["__PAGE__",{}]}]},"$undefined","$undefined",true],"$L2",[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/f97408ee89ea284d.css","precedence":"next"}]],"$L3"]]]]
 4:HL["/_next/static/css/b4846eed11c4725f.css","style"]
 2:[null,"$L5",null]
 3:[["$","meta","0",{"charSet":"utf-8"}],["$","title","1",{"children":"AutoGen UI"}],["$","meta","2",{"name":"description","content":"AutoGen UI is a web-based interface for building AutoGen agents."}],["$","meta","3",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","link","4",{"rel":"icon","href":"/favicon.ico","type":"image/x-icon","sizes":"16x16"}]]
