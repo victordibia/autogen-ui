@@ -203,10 +203,28 @@ export default function ChatBoxView({
             } p-2 rounded  ${css}`}
           >
             {' '}
-            {items.length > 0 && menu}
             {isUser && (
               <>
-                <div className="inline-block">{message.text}</div>
+                <div className="inline-block">
+                  {message.text}
+                  <div
+                    role="button"
+                    onClick={() => {
+                      console.log('retrying');
+                      getCompletion(message.text);
+                    }}
+                  >
+                    <span className="inline-block">
+                      {' '}
+                      <ArrowPathIcon
+                        role={'button'}
+                        title={'Retry'}
+                        className="h-4 w-4 mr-1 inline-block"
+                      />
+                      Retry
+                    </span>
+                  </div>
+                </div>
               </>
             )}
             {!isUser && (

@@ -2,8 +2,10 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+.release.sh
+settings.json
 notebooks/*
+.env.*
 
 # C extensions
 *.so 
