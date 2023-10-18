@@ -21,6 +21,7 @@ classifiers = [
 dependencies = [
     "pydantic",  
     "fastapi",
+    "typer",
     "uvicorn",
     "pyautogen"
 ]
