@@ -6,18 +6,13 @@ import {
   DocumentChartBarIcon,
   ExclamationTriangleIcon,
   PaperAirplaneIcon,
-  PuzzlePieceIcon,
-  TrashIcon,
   UserIcon
 } from '@heroicons/react/24/outline';
-import { Button, Dropdown, MenuProps, Space, message } from 'antd';
+import { Dropdown, MenuProps, message } from 'antd';
 import * as React from 'react';
-import remarkGfm from 'remark-gfm';
-import ReactMarkdown from 'react-markdown';
-import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { IChatMessage, IMessage, IStatus } from '../types';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { fetchJSON } from '../utils';
+import { IChatMessage, IStatus } from '../types';
+import MarkdownView from '../markdown';
+import ChatSideBar from './chatsidebar';
 
 interface CodeProps {
   node?: any;
@@ -29,11 +24,13 @@ export default function ChatBoxView({
   context,
   config,
   initMessages,
+  metadata,
   viewHeight = '100%'
 }: {
   context: any;
   config: any;
   initMessages: any[];
+  metadata: any;
   viewHeight?: string;
 }) {
   const queryInputRef = React.useRef<HTMLInputElement>(null);
@@ -44,13 +41,15 @@ export default function ChatBoxView({
   const deleteMsgUrl = `${serverUrl}/messages/delete`;
 
   const [loading, setLoading] = React.useState(false);
+  const [selectedMessage, setSelectedMessage] =
+    React.useState<IChatMessage | null>(null);
   const [error, setError] = React.useState<IStatus | null>({
     status: true,
     message: 'All good'
   });
   const [messages, setMessages] = React.useState<IChatMessage[]>([]);
 
-  console.log('serverUrl', serverUrl);
+  // console.log('serverUrl', serverUrl);
 
   const parseMessages = (messages: any) => {
     return messages.map((message: any) => {
@@ -75,12 +74,6 @@ export default function ChatBoxView({
     const initMsgs: IChatMessage[] = parseMessages(initMessages);
     setMessages(initMsgs);
   }, [initMessages]);
-
-  function processString(inputString: string): string {
-    inputString = inputString.replace(/\n/g, '  \n');
-    const markdownPattern = /```markdown\s+([\s\S]*?)\s+```/g;
-    return inputString?.replace(markdownPattern, (match, content) => content);
-  }
 
   const messageListView = messages.map((message: IChatMessage, i: number) => {
     const isUser = message.sender === 'user';
@@ -139,30 +132,6 @@ export default function ChatBoxView({
         key: 'metadata'
       });
     }
-
-    // if (messages.length - 1 === i) {
-    //   items.push({
-    //     type: 'divider'
-    //   });
-
-    //   items.push({
-    //     label: (
-    //       <div
-    //         onClick={() => {
-    //           console.log('deleting', message);
-    //           //   deleteMessage(message?.msgId);
-    //         }}
-    //       >
-    //         <TrashIcon
-    //           title={'Delete message'}
-    //           className="h-4 w-4 mr-1 inline-block"
-    //         />
-    //         Delete Message
-    //       </div>
-    //     ),
-    //     key: 'deletemessage'
-    //   });
-    // }
 
     const menu = (
       <Dropdown
@@ -228,46 +197,19 @@ export default function ChatBoxView({
               </>
             )}
             {!isUser && (
-              <div
-                className={`   w-full chatbox prose dark:prose-invert text-primary rounded p-2 `}
-              >
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  components={{
-                    code({
-                      node,
-                      inline,
-                      className,
-                      children,
-                      ...props
-                    }: CodeProps) {
-                      const match = /language-(\w+)/.exec(className || '');
-                      const language = match ? match[1] : 'text';
-                      return !inline && match ? (
-                        <SyntaxHighlighter
-                          {...props}
-                          style={atomDark}
-                          language={language}
-                          className="rounded"
-                          PreTag="div"
-                          wrapLongLines={true}
-                        >
-                          {String(children).replace(/\n$/, '')}
-                        </SyntaxHighlighter>
-                      ) : (
-                        <code {...props} className={className}>
-                          {children}
-                        </code>
-                      );
-                    }
+              <>
+                <MarkdownView data={message.text} />
+                <div
+                  role="button"
+                  onClick={() => {
+                    console.log('retrying');
+                    getCompletion(message.text);
                   }}
+                  className="text-xs mt-1"
                 >
-                  {processString(message.text)}
-                </ReactMarkdown>
-                <div className="text-xs mt-1">
-                  {message.metadata.length} messages
+                  View agent messages ({message.metadata.length})
                 </div>
-              </div>
+              </>
             )}
           </div>
         </div>
@@ -306,7 +248,7 @@ export default function ChatBoxView({
   const chatHistory = (messages: IChatMessage[]) => {
     let history = '';
     messages.forEach((message) => {
-      history += message.text + '\n'; // message.sender + ": " + message.text + "\n";
+      history += `${message.sender}: ${message.text} \n`;
     });
     return history;
   };
@@ -332,6 +274,7 @@ export default function ChatBoxView({
     setError(null);
     let messageHolder = Object.assign([], messages);
     let history = chatHistory(messages);
+    console.log('****history****', history);
 
     const userMessage: IChatMessage = {
       text: query,
@@ -341,7 +284,8 @@ export default function ChatBoxView({
     setMessages(messageHolder);
 
     const payload = {
-      prompt: query
+      prompt: query,
+      history: history
     };
 
     console.log('payload', payload);
@@ -369,6 +313,8 @@ export default function ChatBoxView({
                 sender: 'bot',
                 metadata: data.data
               };
+              // metadata.set({ ...metadata.get, messages: data.data });
+              setSelectedMessage(botMesage);
 
               messageHolder.push(botMesage);
               messageHolder = Object.assign([], messageHolder);
@@ -390,87 +336,94 @@ export default function ChatBoxView({
   };
 
   return (
-    <div
-      style={{ height: 'calc(100% - 20px)' }}
-      className="text-primary   overflow-auto relative   rounded  "
-    >
+    <div className="flex   h-full">
       <div
-        style={{ height: 'calc(100% - 70px)' }}
-        ref={messageBoxInputRef}
-        className="flex overflow-auto  flex-col rounded  scroll pr-2   "
+        style={{ height: 'calc(100% - 20px)' }}
+        className="text-primary   overflow-auto relative   rounded flex-1 "
       >
-        <div className="flex-1  boder mt-4"></div>
-        <div className="ml-2 "> {messageListView}</div>
-        <div className="ml-2 h-6   mb-4 mt-2   ">
-          {loading && (
-            <div className="inline-flex gap-2">
-              <span className="  rounded-full bg-accent h-2 w-2  inline-block"></span>
-              <span className="animate-bounce rounded-full bg-accent h-3 w-3  inline-block"></span>
-              <span className=" rounded-full bg-accent h-2 w-2  inline-block"></span>
+        <div
+          style={{ height: 'calc(100% - 100px)' }}
+          ref={messageBoxInputRef}
+          className="flex overflow-auto  flex-col rounded  scroll pr-2   "
+        >
+          <div className="flex-1  boder mt-4"></div>
+          <div className="ml-2 "> {messageListView}</div>
+          <div className="ml-2 h-6   mb-4 mt-2   ">
+            {loading && (
+              <div className="inline-flex gap-2">
+                <span className="  rounded-full bg-accent h-2 w-2  inline-block"></span>
+                <span className="animate-bounce rounded-full bg-accent h-3 w-3  inline-block"></span>
+                <span className=" rounded-full bg-accent h-2 w-2  inline-block"></span>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="mt-2 p-2   w-full">
+          <div
+            className={`mt-2   rounded p-2 shadow-lg flex mb-1    ${
+              loading ? ' opacity-50 pointer-events-none' : ''
+            }`}
+          >
+            {/* <input className="flex-1 p-2 ring-2" /> */}
+            <form
+              autoComplete="on"
+              className="flex-1 "
+              onSubmit={(e) => {
+                e.preventDefault();
+                // if (queryInputRef.current && !loading) {
+                //   getCompletion(queryInputRef.current?.value);
+                // }
+              }}
+            >
+              <input
+                id="queryInput"
+                name="queryInput"
+                autoComplete="on"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && queryInputRef.current && !loading) {
+                    getCompletion(queryInputRef.current?.value);
+                  }
+                }}
+                ref={queryInputRef}
+                className="w-full text-gray-600 rounded rounded-r-none border border-accent bg-white p-2   ropunded-sm"
+              />
+            </form>
+            <div
+              role={'button'}
+              onClick={() => {
+                if (queryInputRef.current && !loading) {
+                  getCompletion(queryInputRef.current?.value);
+                }
+              }}
+              className="bg-accent   hover:brightness-75 transition duration-300 rounded pt-2 rounded-l-none px-5 "
+            >
+              {' '}
+              {!loading && (
+                <div className="inline-block     ">
+                  <PaperAirplaneIcon className="h-6 text-white   inline-block" />{' '}
+                </div>
+              )}
+              {loading && (
+                <div className="inline-block   ">
+                  <Cog6ToothIcon className="relative -pb-2 text-white animate-spin  inline-flex rounded-full h-6 w-6" />
+                </div>
+              )}
+            </div>
+          </div>{' '}
+          {error && !error.status && (
+            <div className="p-2 border rounded mt-4 text-orange-500 text-sm">
+              {' '}
+              <ExclamationTriangleIcon className="h-5 text-orange-500 inline-block mr-2" />{' '}
+              {error.message}
             </div>
           )}
         </div>
       </div>
-      <div className="mt-2 p-2 absolute   bottom-0 w-full">
-        <div
-          className={`mt-2   rounded p-2 shadow-lg flex mb-1    ${
-            loading ? ' opacity-50 pointer-events-none' : ''
-          }`}
-        >
-          {/* <input className="flex-1 p-2 ring-2" /> */}
-          <form
-            autoComplete="on"
-            className="flex-1 "
-            onSubmit={(e) => {
-              e.preventDefault();
-              // if (queryInputRef.current && !loading) {
-              //   getCompletion(queryInputRef.current?.value);
-              // }
-            }}
-          >
-            <input
-              id="queryInput"
-              name="queryInput"
-              autoComplete="on"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && queryInputRef.current && !loading) {
-                  getCompletion(queryInputRef.current?.value);
-                }
-              }}
-              ref={queryInputRef}
-              className="w-full text-gray-600 rounded rounded-r-none border border-accent bg-white p-2   ropunded-sm"
-            />
-          </form>
-          <div
-            role={'button'}
-            onClick={() => {
-              if (queryInputRef.current && !loading) {
-                getCompletion(queryInputRef.current?.value);
-              }
-            }}
-            className="bg-accent   hover:brightness-75 transition duration-300 rounded pt-2 rounded-l-none px-5 "
-          >
-            {' '}
-            {!loading && (
-              <div className="inline-block     ">
-                <PaperAirplaneIcon className="h-6 text-white   inline-block" />{' '}
-              </div>
-            )}
-            {loading && (
-              <div className="inline-block   ">
-                <Cog6ToothIcon className="relative -pb-2 text-white animate-spin  inline-flex rounded-full h-6 w-6" />
-              </div>
-            )}
-          </div>
-        </div>{' '}
-        {error && !error.status && (
-          <div className="p-2 border rounded mt-4 text-orange-500 text-sm">
-            {' '}
-            <ExclamationTriangleIcon className="h-5 text-orange-500 inline-block mr-2" />{' '}
-            {error.message}
-          </div>
-        )}
-      </div>
+      {selectedMessage && (
+        <div>
+          <ChatSideBar metadata={selectedMessage} />
+        </div>
+      )}
     </div>
   );
 }
