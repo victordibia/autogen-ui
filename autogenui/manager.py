@@ -23,8 +23,8 @@ class Manager(object):
 
         assistant = autogen.AssistantAgent(
             name="assistant",
-            llm_config=llm_config,
-        )
+            system_message="Answer the question and then respond with TERMINATE to end the conversation. DO NOT write any code.",
+            llm_config=llm_config,)
 
         # create a UserProxyAgent instance named "user_proxy"
         user_proxy = autogen.UserProxyAgent(

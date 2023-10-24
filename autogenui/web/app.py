@@ -45,12 +45,16 @@ manager = Manager()
 @api.post("/generate")
 async def generate(req: GenerateWebRequest) -> Dict:
     """Generate a response from the autogen flow"""
-    prompt = req.prompt or "hi there"
+    prompt = req.prompt
+    history = req.history or ""
+
+    prompt = f"{history}\n\n{prompt}"
+    print("******history******", history)
 
     try:
-        autogen_response = manager.run_flow(prompt=prompt)
+        response_messages = manager.run_flow(prompt=prompt)
         response = {
-            "data": autogen_response,
+            "data": response_messages[1:],
             "status": True
         }
     except Exception as e:
