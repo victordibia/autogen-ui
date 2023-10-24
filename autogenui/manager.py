@@ -23,15 +23,14 @@ class Manager(object):
 
         assistant = autogen.AssistantAgent(
             name="assistant",
-            system_message="Answer the question and then respond with TERMINATE to end the conversation. DO NOT write any code.",
-            llm_config=llm_config,)
+            max_consecutive_auto_reply=3, llm_config=llm_config,)
 
         # create a UserProxyAgent instance named "user_proxy"
         user_proxy = autogen.UserProxyAgent(
             name="user_proxy",
             human_input_mode="NEVER",
             llm_config=llm_config,
-            max_consecutive_auto_reply=10,
+            max_consecutive_auto_reply=3,
             is_termination_msg=lambda x: x.get("content", "").rstrip().endswith("TERMINATE"),
             code_execution_config={
                 "work_dir": "scratch/coding",
