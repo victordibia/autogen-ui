@@ -4,6 +4,7 @@
 
 from typing import Dict
 import autogen
+from .utils import parse_token_usage
 
 
 class Manager(object):
@@ -12,6 +13,7 @@ class Manager(object):
         pass
 
     def run_flow(self, prompt: str, flow: str = "default") -> None:
+        autogen.ChatCompletion.start_logging(compact=False)
         config_list = autogen.config_list_openai_aoai()
 
         llm_config = {
@@ -43,4 +45,10 @@ class Manager(object):
         )
 
         messages = user_proxy.chat_messages[assistant]
-        return messages
+        logged_history = autogen.ChatCompletion.logged_history
+        autogen.ChatCompletion.stop_logging()
+        response = {
+            "messages": messages[1:],
+            "usage": parse_token_usage(logged_history)
+        }
+        return response

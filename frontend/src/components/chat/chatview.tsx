@@ -214,11 +214,18 @@ export default function ChatBoxView({
                     {
                       key: "1",
                       label: (
-                        <div>{`Agent Messages (${message.metadata?.length})`}</div>
+                        <div>
+                          {`Agent Messages (${message.metadata?.messages.length})`}
+                          <span className="ml-2">
+                            ${message.metadata?.usage.total_cost.toFixed(3)}
+                          </span>
+                        </div>
                       ),
                       children: (
                         <div>
-                          <AgentMessagesView messages={message.metadata} />
+                          <AgentMessagesView
+                            messages={message.metadata.messages}
+                          />
                         </div>
                       ),
                     },
@@ -329,12 +336,13 @@ export default function ChatBoxView({
           res.json().then((data) => {
             if (data && data.status) {
               console.log("******* response received ", data);
-              const lastMessage = getLastMessage(data.data);
+              const lastMessage = getLastMessage(data.data.messages);
               const botMesage: IChatMessage = {
                 text: lastMessage,
                 sender: "bot",
                 metadata: data.data,
               };
+
               // metadata.set({ ...metadata.get, messages: data.data });
               setSelectedMessage(botMesage);
 

@@ -52,9 +52,9 @@ async def generate(req: GenerateWebRequest) -> Dict:
     print("******history******", history)
 
     try:
-        response_messages = manager.run_flow(prompt=prompt)
+        agent_response = manager.run_flow(prompt=prompt)
         response = {
-            "data": response_messages[1:],
+            "data": agent_response,
             "status": True
         }
     except Exception as e:
