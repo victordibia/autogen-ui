@@ -1,0 +1,54 @@
+.dark {
+  --color-bg-primary: #111827;
+  --color-bg-secondary: #1e293b;
+  --color-bg-light: #27354c;
+  --color-bg-accent: #22c55e;
+  --color-text-primary: #f7fafc;
+  --color-text-secondary: #e2e8f0;
+  --color-text-accent: #22c55e;
+  --color-border-primary: #f7fafc;
+  --color-border-secondary: #e2e8f045;
+  --color-border-accent: #22c55e;
+}
+
+.light {
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #edf2f7;
+  --color-bg-light: #f9fafb;
+  --color-bg-accent: #16a34a;
+  --color-text-primary: #334155;
+  --color-text-secondary: #64748b;
+  --color-text-accent: #16a34a;
+  --color-border-primary: #2d3748c1;
+  --color-border-secondary: #edf2f7;
+  --color-border-accent: #16a34a;
+}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.text-accent {
+  color: #5e87e3 !important;
+}
+.bg-accent {
+  background-color: #5e87e3 !important;
+}
+.border-accent {
+  border-color: #5e87e3 !important;
+}
+
+.scroll::-webkit-scrollbar {
+  width: 8px; /* width of the entire scrollbar */
+  height: 8px;
+}
+
+.scroll::-webkit-scrollbar-track {
+  @apply bg-secondary;
+  border-radius: 20px;
+}
+
+.scroll::-webkit-scrollbar-thumb {
+  @apply bg-accent;
+  border-radius: 20px; /* roundness of the scroll thumb */
+  border: 3px solid rgb(214, 214, 214); /* creates padding around scroll thumb */
+}
