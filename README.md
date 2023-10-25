@@ -52,8 +52,8 @@ To modify the source files, make changes in the frontend source files and run `n
   - [ ] **Debug Tools**: enable support for useful debugging capabilities like viewing
     - [x] # of agent turns per request
     - [ ] define agent config (e.g. assistant agent + code agent)
-    - [ ] agent internal conversation history per request
-    - [ ] cost of interaction per request (# tokens and $ cost)
+    - [x] append conversation history per request
+    - [ ] display cost of interaction per request (# tokens and $ cost)
 - [ ] Streaming UI
       Enable streaming of agent responses to the UI. This will enable the UI to show agent responses as they are generated, instead of waiting for the entire response to be generated.
 - [ ] **Flow based Playground UI**  
