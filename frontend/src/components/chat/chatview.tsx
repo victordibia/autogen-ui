@@ -146,11 +146,13 @@ export default function ChatBoxView({
 
     return (
       <div
-        className={`align-right ${isUser ? "text-right" : ""}  mb-2 `}
+        className={`align-right ${
+          isUser ? "text-right" : " mb-2 border-b pb-2"
+        }  `}
         key={"message" + i}
       >
         {" "}
-        <div className={`  ${isUser ? "" : " w-full"} inline-flex gap-2`}>
+        <div className={`  ${isUser ? "" : " w-full "} inline-flex gap-2`}>
           <div className="">
             {" "}
             {!isUser && (
@@ -196,16 +198,6 @@ export default function ChatBoxView({
             {!isUser && (
               <>
                 <MarkdownView data={message.text} />
-                {/* <div
-                  role="button"
-                  onClick={() => {
-                    console.log("retrying");
-                    setSelectedMessage(message);
-                  }}
-                  className="text-xs mt-1 border-t pt-2 "
-                >
-                  View agent messages ({message.metadata?.length})
-                </div> */}
 
                 <Collapse
                   size="small"
@@ -215,9 +207,17 @@ export default function ChatBoxView({
                       key: "1",
                       label: (
                         <div>
-                          {`Agent Messages (${message.metadata?.messages.length})`}
-                          <span className="ml-2">
+                          <span className="pr-2">
+                            {" "}
+                            {`Agent Messages (${message.metadata?.messages.length})`}
+                          </span>
+                          |{" "}
+                          <span className="px-2">
                             ${message.metadata?.usage.total_cost.toFixed(3)}
+                          </span>
+                          |{" "}
+                          <span className="px-2">
+                            ${message.metadata?.time.toFixed(2)} seconds
                           </span>
                         </div>
                       ),
@@ -369,7 +369,7 @@ export default function ChatBoxView({
   return (
     <div
       style={{ height: "calc(100% - 20px)" }}
-      className="text-primary   overflow-auto relative scroll   rounded flex-1 "
+      className="text-primary   overflow-auto bg-primary relative scroll   rounded flex-1 "
     >
       <div
         style={{ height: "calc(100% - 100px)" }}
@@ -396,7 +396,6 @@ export default function ChatBoxView({
         >
           {/* <input className="flex-1 p-2 ring-2" /> */}
           <form
-            autoComplete="on"
             className="flex-1 "
             onSubmit={(e) => {
               e.preventDefault();
@@ -408,7 +407,6 @@ export default function ChatBoxView({
             <input
               id="queryInput"
               name="queryInput"
-              autoComplete="on"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && queryInputRef.current && !loading) {
                   getCompletion(queryInputRef.current?.value);
