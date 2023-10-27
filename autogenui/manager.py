@@ -5,6 +5,7 @@
 from typing import Dict
 import autogen
 from .utils import parse_token_usage
+import time
 
 
 class Manager(object):
@@ -39,6 +40,7 @@ class Manager(object):
                 "use_docker": False
             },
         )
+        start_time = time.time()
         user_proxy.initiate_chat(
             assistant,
             message=prompt,
@@ -49,6 +51,7 @@ class Manager(object):
         autogen.ChatCompletion.stop_logging()
         response = {
             "messages": messages[1:],
-            "usage": parse_token_usage(logged_history)
+            "usage": parse_token_usage(logged_history),
+            "duration": time.time() - start_time,
         }
         return response
