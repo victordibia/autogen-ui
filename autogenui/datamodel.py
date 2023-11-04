@@ -44,5 +44,5 @@ class AgentFlowSpec:
 class FlowConfig:
     """Data model for Flow Config for Autogen"""
     name: str
-    driver_agent: AgentConfig
+    sender_agent: AgentConfig
     receiver_agent: Union[AgentConfig, List[AgentConfig]]
