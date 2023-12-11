@@ -21,7 +21,6 @@ class Manager(object):
             "seed": 42,  # seed for caching and reproducibility
             "config_list": config_list,  # a list of OpenAI API configurations
             "temperature": 0,  # temperature for sampling
-            #"use_cache": True,  # whether to use cache
         }
 
         assistant = autogen.AssistantAgent(
