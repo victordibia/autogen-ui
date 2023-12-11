@@ -14,11 +14,10 @@ class GenerateWebRequest:
 @dataclass
 class LLMConfig:
     """Data model for LLM Config for Autogen"""
-    seed: int = 42
+    seed: int = 42 # set to `None` to disable caching
     config_list: List[Dict[str, Any]] = field(
         default_factory=list)  # a list of OpenAI API configurations
     temperature: float = 0
-    use_cache: bool = True
     request_timeout: Optional[int] = None
 
 

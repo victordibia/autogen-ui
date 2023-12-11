@@ -44,7 +44,7 @@ export default function ChatBoxView({
   });
   const [messages, setMessages] = React.useState<IChatMessage[]>([]);
 
-  // console.log('serverUrl', serverUrl);
+  //console.log('serverUrl', serverUrl);
 
   const parseMessages = (messages: any) => {
     return messages.map((message: any) => {
@@ -210,14 +210,6 @@ export default function ChatBoxView({
                           <span className="pr-2">
                             {" "}
                             {`Agent Messages (${message.metadata?.messages.length})`}
-                          </span>
-                          |{" "}
-                          <span className="px-2">
-                            ${message.metadata?.usage.total_cost.toFixed(3)}
-                          </span>
-                          |{" "}
-                          <span className="px-2">
-                            ${message.metadata?.time.toFixed(2)} seconds
                           </span>
                         </div>
                       ),
