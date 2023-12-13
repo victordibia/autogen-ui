@@ -14,14 +14,13 @@ class Manager(object):
         pass
 
     def run_flow(self, prompt: str, flow: str = "default") -> None:
-        autogen.ChatCompletion.start_logging(compact=False)
+        #autogen.ChatCompletion.start_logging(compact=False)
         config_list = autogen.config_list_openai_aoai()
 
         llm_config = {
             "seed": 42,  # seed for caching and reproducibility
             "config_list": config_list,  # a list of OpenAI API configurations
             "temperature": 0,  # temperature for sampling
-            "use_cache": True,  # whether to use cache
         }
 
         assistant = autogen.AssistantAgent(
@@ -47,11 +46,11 @@ class Manager(object):
         )
 
         messages = user_proxy.chat_messages[assistant]
-        logged_history = autogen.ChatCompletion.logged_history
+        #logged_history = autogen.ChatCompletion.logged_history
         autogen.ChatCompletion.stop_logging()
         response = {
             "messages": messages[1:],
-            "usage": parse_token_usage(logged_history),
+            "usage": "", #parse_token_usage(logged_history),
             "duration": time.time() - start_time,
         }
         return response
