@@ -21,6 +21,7 @@ class Manager(object):
             "seed": 42,  # seed for caching and reproducibility
             "config_list": config_list,  # a list of OpenAI API configurations
             "temperature": 0,  # temperature for sampling
+            "model": "gpt-4o",
         }
 
         assistant = autogen.AssistantAgent(
@@ -43,6 +44,7 @@ class Manager(object):
         user_proxy.initiate_chat(
             assistant,
             message=prompt,
+
         )
 
         messages = user_proxy.chat_messages[assistant]
