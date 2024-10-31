@@ -122,7 +122,18 @@ There isnt really much of a roadmap for this project. It is meant as a simple ex
 
 ## References
 
-- [AutoGen](https://arxiv.org/abs/2308.08155).
+- [AutoGen Studio](https://arxiv.org/abs/2308.08155).
+
+```
+@inproceedings{dibia2024autogen,
+  title={AutoGen Studio: A No-Code Developer Tool for Building and Debugging Multi-Agent Systems},
+  author={Dibia, Victor and Chen, Jingya and Bansal, Gagan and Syed, Suff and Fourney, Adam and Zhu, Erkang and Wang, Chi and Amershi, Saleema},
+  journal={EMNLP 2024},
+  year={2024}
+}
+```
+
+- [AutoGen](https://arxiv.org/abs/2408.15247).
 
 ```
 @inproceedings{wu2023autogen,
