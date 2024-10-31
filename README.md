@@ -2,27 +2,41 @@
 
 ![AutoGen UI Screenshot](docs/images/autogenuiscreen.png)
 
-Experimental UI for working with [AutoGen](https://github.com/microsoft/autogen) agents, based on the [AutoGen](https://github.com/microsoft/autogen) library. The UI is built using Next.js and web apis built using FastApi.
+> [!IMPORTANT]  
+> This repo has been updated to use the [AutoGen AgentChat](https://microsoft.github.io/autogen/dev/user-guide/agentchat-user-guide/quickstart.html) interface based on the new AutoGen 0.4x api. Also, this app is only meant as an example on how to get started.
 
-## Why AutoGen UI?
+Example UI to demonstrate how to build interfaces using the [AutoGen AgentChat](https://github.com/microsoft/autogen) API. The UI is built using Next.js and web apis built using FastApi.
 
-AutoGen is a framework that enables the development of LLM applications using multiple agents that can converse with each other to solve complex tasks. A UI can help in the development of such applications by enabling rapid prototyping and testing and debugging of agents/agent flows (defining, composing etc) inspecting agent behaviors, and agent outcomes.
+## What Does the App Do?
 
-> **Note:** This is early work in progress.
+- [`autogenui.web.app.py`](autogenui/web/app.py) - FastApi backend that serves a simple `/generate` endpoint that takes a prompt and returns a response from a predefined [agent team](notebooks/default_team.json).
+- [`autogenui.manager`](autogenui/manager.py) - provides a simple run method that takes a prompt and returns a response from a predefined [agent team](notebooks/default_team.json). Take a look at the [agent team](notebooks/default_team.json) json config file to see how the agents are configured. It gives a general idea on what types of agents are supported etc.
+- [`autogenui.logging`](autogenui/logging/handler.py) - Implements a ConsoleHandler (prints to console) and a WebSocketHandler (streams to a connected UI session) for processing agent log events.
+- [`frontend`](frontend) - Next.js frontend that provides a simple chat interface to interact with the backend.
 
-Note that you will have to setup your OPENAI_API_KEY or general llm config using an environment variable.
-Also See this article for how Autogen supports multiple [llm providers](https://microsoft.github.io/autogen/docs/FAQ/#set-your-api-endpoints)
+## What's Next?
+
+This app is clearly just a starting point. Here are some ideas on how to extend it:
+
+- Extend the manager to support multiple team configurations from the UI
+- Storing and loading interaction history in a database.
+- Security - add authentication and authorization to the app
+
+> [!TIP] Note
+> [AutoGen Studio](https://github.com/microsoft/autogen/tree/main/python/packages/autogen-studio) is being rewritten on the AgentChat api to address most of the above points. Take a look at the implementation there for a more complete example.
+
+## Getting Started
+
+Note that you will have to setup your OPENAI_API_KEY to run the app.
 
 ```bash
 export OPENAI_API_KEY=<your key>
 ```
 
-## Getting Started
-
 Install dependencies. Python 3.9+ is required. You can install from pypi using pip.
 
 ```bash
-pip install autogenui .
+pip install autogenui
 ```
 
 or to install from source
@@ -35,7 +49,7 @@ pip install -e .
 
 Run ui server.
 
-Set env vars `OPENAI_API_KEY` and `NEXT_PUBLIC_API_SERVER`.
+Set env vars `OPENAI_API_KEY`
 
 ```bash
 export OPENAI_API_KEY=<your_key>
@@ -51,13 +65,16 @@ To modify the source files, make changes in the frontend source files and run `n
 
 ## Development
 
-## backend - with hot-reload
+To run the app in development mode, you will need to run the backend and frontend separately.
+
+## Backend - with hot-reload
 
 ```bash
 autogenui --reload
 ```
 
-note: the UI loaded by this CLI in a pre-complied version by running the frontend build command show blow. That means if you make changes the frontend code or change the hostname or port the backend is running on the frontend updated frontend code needs to be rebuilt for it to load through this command. 
+> [!TIP] Tip
+> The UI loaded by this CLI in a pre-complied version by running the frontend build command show blow. That means if you make changes the frontend code or change the hostname or port the backend is running on the frontend updated frontend code needs to be rebuilt for it to load through this command.
 
 ## Frontend
 
@@ -73,11 +90,19 @@ yarn install
 
 Run in dev mode - with hot-reload
 
+Set `NEXT_PUBLIC_API_SERVER` on the command line.
+
 ```bash
 export NEXT_PUBLIC_API_SERVER=http://<your_backend_hostname>/api
 ```
 
-your_backend_hostname - is the hostname that autogenui is running on e.g. `localhost:8081`
+Or create a `.env` file in the frontend folder with the following content.
+
+```bash
+NEXT_PUBLIC_API_SERVER=http://<your_backend_hostname>/api
+```
+
+where your_backend_hostname - is the hostname that autogenui is running on e.g. `localhost:8081`
 
 ```bash
 yarn dev
@@ -91,26 +116,9 @@ Remember to install dependencies and set `NEXT_PUBLIC_API_SERVER` before buildin
 yarn build
 ```
 
-
 ## Roadmap
 
-- [x] **FastApi end point for AutoGen**.
-      This involves setting up a FastApi endpoint that can respond to end user prompt based requests using a basic two agent format.
-- [ ] **Basic Chat UI**
-      Front end UI with a chatbox to enable sending requests and showing responses from the end point for a basic 2 agent format.
-  - [ ] **Debug Tools**: enable support for useful debugging capabilities like viewing
-    - [x] # of agent turns per request
-    - [ ] define agent config (e.g. assistant agent + code agent)
-    - [x] append conversation history per request
-    - [x] display cost of interaction per request (# tokens and $ cost)
-- [ ] Streaming UI
-      Enable streaming of agent responses to the UI. This will enable the UI to show agent responses as they are generated, instead of waiting for the entire response to be generated.
-- [ ] **Flow based Playground UI**  
-       Explore the use of a tool like React Flow to add agent nodes and compose agent flows. For example, setup an assistant agent + a code agent, click run and view output in a chat window.
-  - [ ] Create agent nodes
-  - [ ] Compose agent nodes into flows
-  - [ ] Run agent flows
-- [ ] Explore external integrations e.g. with [Flowise](https://github.com/FlowiseAI/Flowise)
+There isnt really much of a roadmap for this project. It is meant as a simple example to get started with the AutoGen AgentChat API. For a more complete example, take a look at the [AutoGen Studio](https://github.com/microsoft/autogen/tree/main/python/packages/autogen-studio) project.
 
 ## References
 

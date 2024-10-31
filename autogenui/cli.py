@@ -11,7 +11,7 @@ def main(
     host: str = "127.0.0.1",
     port: int = 8081,
     workers: int = 1,
-    reload: Annotated[bool, typer.Option("--reload")] = False,
+    reload: Annotated[bool, typer.Option("--reload")] = True,
     docs: bool = False,
 ):
     """

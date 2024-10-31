@@ -6,51 +6,29 @@ from typing import Dict
 import autogen
 from .utils import parse_token_usage
 import time
+import json
+from .provider import Provider
 
 
 class Manager(object):
     def __init__(self) -> None:
+        self.provider = Provider()
 
-        pass
+    async def run(self, task: str) -> None:
 
-    def run_flow(self, prompt: str, flow: str = "default") -> None:
-        #autogen.ChatCompletion.start_logging(compact=False)
-        config_list = autogen.config_list_openai_aoai()
+        team_json_spec = json.load(open("notebooks/default_team.json"))
 
-        llm_config = {
-            "seed": 42,  # seed for caching and reproducibility
-            "config_list": config_list,  # a list of OpenAI API configurations
-            "temperature": 0,  # temperature for sampling
-        }
+        team = self.provider.load_team(team_json_spec)
 
-        assistant = autogen.AssistantAgent(
-            name="assistant",
-            max_consecutive_auto_reply=3, llm_config=llm_config,)
-
-        # create a UserProxyAgent instance named "user_proxy"
-        user_proxy = autogen.UserProxyAgent(
-            name="user_proxy",
-            human_input_mode="NEVER",
-            llm_config=llm_config,
-            max_consecutive_auto_reply=3,
-            is_termination_msg=lambda x: x.get("content", "").rstrip().endswith("TERMINATE"),
-            code_execution_config={
-                "work_dir": "scratch/coding",
-                "use_docker": False
-            },
-        )
         start_time = time.time()
-        user_proxy.initiate_chat(
-            assistant,
-            message=prompt,
-        )
 
-        messages = user_proxy.chat_messages[assistant]
-        #logged_history = autogen.ChatCompletion.logged_history
+        result = await team.run(task=task)
+
+        # logged_history = autogen.ChatCompletion.logged_history
         autogen.ChatCompletion.stop_logging()
         response = {
-            "messages": messages[1:],
-            "usage": "", #parse_token_usage(logged_history),
+            "messages": result.messages,
+            "usage": "",  # parse_token_usage(logged_history),
             "duration": time.time() - start_time,
         }
         return response
