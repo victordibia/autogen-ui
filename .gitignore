@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 .release.sh
 settings.json
-notebooks/*
+# notebooks/*
 .env.*
 testapp/*
 

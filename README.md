@@ -10,7 +10,7 @@ Example UI to demonstrate how to build interfaces using the [AutoGen AgentChat](
 ## What Does the App Do?
 
 - [`autogenui.web.app.py`](autogenui/web/app.py) - FastApi backend that serves a simple `/generate` endpoint that takes a prompt and returns a response from a predefined [agent team](notebooks/default_team.json).
-- [`autogenui.manager`](autogenui/manager.py) - provides a simple run method that takes a prompt and returns a response from a predefined [agent team](notebooks/default_team.json). Take a look at the [agent team](notebooks/default_team.json) json config file to see how the agents are configured. It gives a general idea on what types of agents are supported etc.
+- [`autogenui.manager`](autogenui/manager.py) - provides a simple run method that takes a prompt and returns a response from a predefined [agent team](notebooks/default_team.json). Take a look at the [agent team](notebooks/default_team.json) json config file to see how the agents are configured. It gives a general idea on what types of agents are supported etc. Check out the [tutorial notebook](notebooks/tutorial.ipynb) for an example on how to use the provide class to load a team spec.
 - [`autogenui.logging`](autogenui/logging/handler.py) - Implements a ConsoleHandler (prints to console) and a WebSocketHandler (streams to a connected UI session) for processing agent log events.
 - [`frontend`](frontend) - Next.js frontend that provides a simple chat interface to interact with the backend.
 
