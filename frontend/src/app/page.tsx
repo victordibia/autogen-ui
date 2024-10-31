@@ -58,8 +58,17 @@ export default async function IndexPage() {
 
   return (
     <main className=" h-full">
-      <div className="mb-4">AutoGen Agent Chat </div>
-
+      <div className="p-2 border mb-2 text-xs rounded text-secondary">
+        {" "}
+        Sample app to show streaming logs in{" "}
+        <a
+          href="https://github.com/microsoft/autogen/tree/main/python/packages/autogen-agentchat"
+          className="text-primary font-semibold"
+        >
+          AutoGen AgentChat
+        </a>{" "}
+        to a UI
+      </div>
       <ChatBoxView initMessages={[]} />
     </main>
   );

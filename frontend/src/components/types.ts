@@ -23,7 +23,32 @@ export interface IStatus {
 
 export interface IChatMessage {
   text: string;
-  sender: 'user' | 'bot';
+  sender: "user" | "bot";
   metadata?: any;
   msgId?: number;
+}
+
+export interface ChatInputProps {
+  onSubmit: (text: string) => void;
+  loading: boolean;
+  error: IStatus | null;
+}
+export interface LogEvent {
+  timestamp: string;
+  type: string;
+  content: string;
+  source?: string;
+}
+
+export interface IChatMessageWithSession extends IChatMessage {
+  sessionId?: string;
+  status?: "processing" | "complete";
+  finalResponse?: string;
+}
+
+export interface MessageListProps {
+  messages: IChatMessageWithSession[];
+  sessionLogs: Record<string, LogEvent[]>;
+  onRetry: (text: string) => void;
+  loading: boolean;
 }
