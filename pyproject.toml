@@ -22,8 +22,9 @@ dependencies = [
     "pydantic",  
     "fastapi",
     "typer",
-    "uvicorn",
-    "pyautogen"
+    "uvicorn", 
+    "autogen-agentchat @ git+https://github.com/microsoft/autogen.git#subdirectory=python/packages/autogen-agentchat",
+    "autogen-ext @ git+https://github.com/microsoft/autogen.git#subdirectory=python/packages/autogen-ext",
 ]
 optional-dependencies = {web = ["fastapi", "uvicorn"]}
 
