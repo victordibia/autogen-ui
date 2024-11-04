@@ -11,7 +11,7 @@ from .provider import Provider
 
 
 class Manager(object):
-    def __init__(self) -> None:
+    def __init__(self, ) -> None:
         self.provider = Provider()
 
     async def run(self, task: str) -> None:
@@ -19,13 +19,8 @@ class Manager(object):
         team_json_spec = json.load(open("notebooks/default_team.json"))
 
         team = self.provider.load_team(team_json_spec)
-
         start_time = time.time()
-
         result = await team.run(task=task)
-
-        # logged_history = autogen.ChatCompletion.logged_history
-        autogen.ChatCompletion.stop_logging()
         response = {
             "messages": result.messages,
             "usage": "",  # parse_token_usage(logged_history),
