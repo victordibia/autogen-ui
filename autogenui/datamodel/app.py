@@ -1,6 +1,8 @@
 
 from typing import Any, List, Literal, Optional
+from pydantic import BaseModel
 from pydantic.dataclasses import dataclass
+from autogen_agentchat.base._task import TaskResult
 
 
 @dataclass
@@ -41,3 +43,9 @@ class TeamConfig:
     team_type: Literal["RoundRobinGroupChat", "SelectorGroupChat"]
     model_client: Optional[ModelConfig] = None
     termination_condition: Optional[TerminationConfig] = None
+
+
+class TeamResult(BaseModel):
+    task_result: TaskResult
+    usage: str
+    duration: float

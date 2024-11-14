@@ -37,14 +37,19 @@ export default function ChatView({
 
   const getBaseUrl = (url: string): string => {
     try {
+      // Remove protocol and api path for WebSocket
       return url
-        .replace(/(^\w+:|^)\/\//, "")
-        .replace("/api", "")
-        .replace(/\/$/, "");
+        .replace(/(^\w+:|^)\/\//, "") // Remove protocol (http:// or https://)
+        .replace("/api", ""); // Remove /api for base
     } catch (error) {
       console.error("Error processing server URL:", error);
       throw new Error("Invalid server URL configuration");
     }
+  };
+
+  const getApiBaseUrl = (url: string): string => {
+    // Keep the /api path for HTTP requests
+    return url.replace(/\/$/, ""); // Just remove trailing slash if exists
   };
 
   React.useEffect(() => {
@@ -58,75 +63,115 @@ export default function ChatView({
     };
   }, [activeSockets]);
 
-  const connectWebSocket = async (sessionId: string) => {
+  const connectWebSocket = async (sessionId: string): Promise<WebSocket> => {
     const baseUrl = getBaseUrl(serverUrl);
     const wsUrl = `ws://${baseUrl}/api/ws/logs/${sessionId}`;
 
-    const socket = new WebSocket(wsUrl);
+    return new Promise((resolve, reject) => {
+      const socket = new WebSocket(wsUrl);
 
-    socket.onopen = () => {
-      setActiveSockets((prev) => ({
-        ...prev,
-        [sessionId]: socket,
-      }));
-    };
+      let heartbeatInterval: NodeJS.Timeout;
 
-    socket.onmessage = (event) => {
-      const logEvent = JSON.parse(event.data);
+      socket.onopen = () => {
+        console.log("WebSocket connected for session:", sessionId);
 
-      setSessionLogs((prev) => ({
-        ...prev,
-        [sessionId]: [...(prev[sessionId] || []), logEvent],
-      }));
+        // Setup heartbeat every 30 seconds
+        heartbeatInterval = setInterval(() => {
+          if (socket.readyState === WebSocket.OPEN) {
+            socket.send("ping");
+          }
+        }, 30000);
 
-      if (logEvent.type === "GroupChatPublishEvent") {
-        setMessages((prev) =>
-          prev.map((msg) => {
-            if (msg.sessionId === sessionId && msg.sender === "bot") {
-              return {
-                ...msg,
-                text: logEvent.content,
-              };
-            }
-            return msg;
-          })
-        );
-      }
+        setActiveSockets((prev) => ({
+          ...prev,
+          [sessionId]: socket,
+        }));
+        resolve(socket);
+      };
 
-      if (logEvent.type === "TerminationEvent") {
-        socket.close();
+      socket.onmessage = (event) => {
+        try {
+          const logEvent = JSON.parse(event.data);
+          console.log("Received event:", logEvent);
+
+          setSessionLogs((prev) => ({
+            ...prev,
+            [sessionId]: [...(prev[sessionId] || []), logEvent],
+          }));
+
+          if (logEvent.type === "GroupChatPublishEvent") {
+            setMessages((prev) =>
+              prev.map((msg) => {
+                if (msg.sessionId === sessionId && msg.sender === "bot") {
+                  return {
+                    ...msg,
+                    text: logEvent.content,
+                  };
+                }
+                return msg;
+              })
+            );
+          }
+
+          if (logEvent.type === "TaskResultEvent") {
+            setMessages((prev) =>
+              prev.map((msg) => {
+                if (msg.sessionId === sessionId && msg.sender === "bot") {
+                  return {
+                    ...msg,
+                    finalResponse: logEvent.content,
+                  };
+                }
+                return msg;
+              })
+            );
+          }
+
+          if (logEvent.type === "ErrorEvent") {
+            message.error(logEvent.content);
+            setError({
+              status: false,
+              message: logEvent.content,
+            });
+          }
+
+          if (logEvent.type === "TerminationEvent") {
+            console.log("Stream completed for session:", sessionId);
+            clearInterval(heartbeatInterval);
+            socket.close();
+            setActiveSockets((prev) => {
+              const newSockets = { ...prev };
+              delete newSockets[sessionId];
+              return newSockets;
+            });
+          }
+        } catch (error) {
+          console.error("Error processing WebSocket message:", error);
+        }
+      };
+
+      socket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+        clearInterval(heartbeatInterval);
+        message.error("WebSocket connection error");
+        reject(error);
+      };
+
+      socket.onclose = () => {
+        console.log("WebSocket closed for session:", sessionId);
+        clearInterval(heartbeatInterval);
         setActiveSockets((prev) => {
           const newSockets = { ...prev };
           delete newSockets[sessionId];
           return newSockets;
         });
-      }
-    };
-
-    socket.onclose = () => {
-      setActiveSockets((prev) => {
-        const newSockets = { ...prev };
-        delete newSockets[sessionId];
-        return newSockets;
-      });
-    };
-
-    socket.onerror = (error) => {
-      console.error("WebSocket error:", error);
-      message.error("WebSocket connection error");
-      socket.close();
-      setActiveSockets((prev) => {
-        const newSockets = { ...prev };
-        delete newSockets[sessionId];
-        return newSockets;
-      });
-    };
-
-    return socket;
+      };
+    });
   };
 
   const createSession = async (): Promise<string> => {
-    const response = await fetch(`${serverUrl}/create_session`, {
+    const apiUrl = getApiBaseUrl(serverUrl);
+    const response = await fetch(`${apiUrl}/create_session`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -149,16 +194,6 @@ export default function ChatView({
     return history;
   };
 
-  const getLastMessage = (messages: any[], n: number = 5) => {
-    for (let i = messages.length - 1; i >= 0; i--) {
-      const content = messages[i]["content"];
-      if (content.length > n) {
-        return content;
-      }
-    }
-    return null;
-  };
-
   const getCompletion = async (query: string) => {
     setError(null);
     setLoading(true);
@@ -168,7 +203,12 @@ export default function ChatView({
       currentSessionId = await createSession();
       setCurrentSessionId(currentSessionId);
 
-      await connectWebSocket(currentSessionId);
+      // Wait for WebSocket to connect
+      const socket = await connectWebSocket(currentSessionId);
+
+      if (!socket) {
+        throw new Error("Could not establish WebSocket connection");
+      }
 
       const userMessage: IChatMessageWithSession = {
         text: query,
@@ -185,8 +225,8 @@ export default function ChatView({
 
       setMessages((prev) => [...prev, userMessage, botMessage]);
 
-      const generateUrl = `${serverUrl}/generate`;
-      const response = await fetch(generateUrl, {
+      const apiUrl = getApiBaseUrl(serverUrl);
+      const response = await fetch(`${apiUrl}/generate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -203,30 +243,19 @@ export default function ChatView({
       }
 
       const data = await response.json();
-
-      if (data.status) {
-        const lastMessage = getLastMessage(data.data.messages);
-        setMessages((prev) =>
-          prev.map((msg) => {
-            if (msg.sessionId === currentSessionId && msg.sender === "bot") {
-              return {
-                ...msg,
-                finalResponse: lastMessage,
-                status: "complete",
-              };
-            }
-            return msg;
-          })
-        );
-      } else {
-        message.error(data.message);
+      if (!data.status) {
+        throw new Error(data.message || "Unknown error occurred");
       }
     } catch (err) {
       console.error("Error:", err);
-      message.error("Error during request processing");
+      message.error(
+        err instanceof Error ? err.message : "Unknown error occurred"
+      );
+
       if (currentSessionId && activeSockets[currentSessionId]) {
         activeSockets[currentSessionId].close();
       }
+
       setError({
         status: false,
         message: err instanceof Error ? err.message : "Unknown error occurred",
