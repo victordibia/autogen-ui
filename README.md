@@ -3,13 +3,15 @@
 ![AutoGen UI Screenshot](docs/images/autogenuiscreen.png)
 
 > [!IMPORTANT]  
-> This repo has been updated to use the [AutoGen AgentChat](https://microsoft.github.io/autogen/dev/user-guide/agentchat-user-guide/quickstart.html) interface based on the new AutoGen 0.4x api. Also, this app is only meant as an example on how to get started.
+> This repo has been updated to use the [AutoGen AgentChat](https://microsoft.github.io/autogen/dev/user-guide/agentchat-user-guide/quickstart.html) interface based on the new AutoGen 0.4x AgentChat api. Also, the API might change, so expect some breaking changes in the future.
 
 The hello world for building a UI interface with AutoGen AgentChat API.
 
 Example UI to demonstrate how to build interfaces using the [AutoGen AgentChat](https://github.com/microsoft/autogen) API. The UI is built using Next.js and web apis built using FastApi.
 
 ## What Does the App Do?
+
+![AutoGen UI Flow Diagram](docs/images/flowdiag.png)
 
 - [`autogenui.manager`](autogenui/manager.py) - provides a simple run method that takes a prompt and returns a response from a predefined [agent team](notebooks/default_team.json). Take a look at the [agent team](notebooks/default_team.json) json config file to see how the agents are configured. It gives a general idea on what types of agents are supported etc. Check out the [tutorial notebook](notebooks/tutorial.ipynb) for an example on how to use the provide class to load a team spec.
 
